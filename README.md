@@ -1,6 +1,8 @@
 # overseer
 
-[![GoDoc](https://godoc.org/github.com/jpillora/overseer?status.svg)](https://godoc.org/github.com/jpillora/overseer)   [![Tests](https://github.com/jpillora/overseer/workflows/Tests/badge.svg)](https://github.com/jpillora/overseer/actions?workflow=Tests)
+** FROM: https://github.com/jpillora/overseer**
+
+[![GoDoc](https://godoc.org/gitlab.com/moresec/overseer?status.svg)](https://godoc.org/gitlab.com/moresec/overseer)   [![Tests](https://gitlab.com/moresec/overseer/workflows/Tests/badge.svg)](https://gitlab.com/moresec/overseer/actions?workflow=Tests)
 
 `overseer` is a package for creating monitorable, gracefully restarting, self-upgrading binaries in Go (golang). The main goal of this project is to facilitate the creation of self-upgrading binaries which play nice with standard process managers, secondly it should expose a small and simple API with reasonable defaults.
 
@@ -18,7 +20,7 @@ Commonly, graceful restarts are performed by the active process (*dark blue*) cl
 ### Install
 
 ```sh
-go get github.com/jpillora/overseer
+go get gitlab.com/moresec/overseer
 ```
 
 ### Quick example
@@ -34,8 +36,8 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/jpillora/overseer"
-	"github.com/jpillora/overseer/fetcher"
+	"gitlab.com/moresec/overseer"
+	"gitlab.com/moresec/overseer/fetcher"
 )
 
 //create another main() to run the overseer process
@@ -73,7 +75,7 @@ func prog(state overseer.State) {
 * Once a binary is received, it is run with a simple echo token to confirm it is a `overseer` binary.
 * Except for scheduled restarts, the active child process exiting will cause the main process to exit with the same code. So, **`overseer` is not a process manager**.
 
-See [Config](https://godoc.org/github.com/jpillora/overseer#Config)uration options [here](https://godoc.org/github.com/jpillora/overseer#Config) and the runtime [State](https://godoc.org/github.com/jpillora/overseer#State) available to your program [here](https://godoc.org/github.com/jpillora/overseer#State).
+See [Config](https://godoc.org/gitlab.com/moresec/overseer#Config)uration options [here](https://godoc.org/gitlab.com/moresec/overseer#Config) and the runtime [State](https://godoc.org/gitlab.com/moresec/overseer#State) available to your program [here](https://godoc.org/gitlab.com/moresec/overseer#State).
 
 ### More examples
 
@@ -157,12 +159,12 @@ func main() {
 
 ### More documentation
 
-* [Core `overseer` package](https://godoc.org/github.com/jpillora/overseer)
-* [Common `fetcher.Interface`](https://godoc.org/github.com/jpillora/overseer/fetcher#Interface)
-	* [File fetcher](https://godoc.org/github.com/jpillora/overseer/fetcher#File)
-	* [HTTP fetcher](https://godoc.org/github.com/jpillora/overseer/fetcher#HTTP)
-	* [S3 fetcher](https://godoc.org/github.com/jpillora/overseer/fetcher#S3)
-	* [Github fetcher](https://godoc.org/github.com/jpillora/overseer/fetcher#Github)
+* [Core `overseer` package](https://godoc.org/gitlab.com/moresec/overseer)
+* [Common `fetcher.Interface`](https://godoc.org/gitlab.com/moresec/overseer/fetcher#Interface)
+	* [File fetcher](https://godoc.org/gitlab.com/moresec/overseer/fetcher#File)
+	* [HTTP fetcher](https://godoc.org/gitlab.com/moresec/overseer/fetcher#HTTP)
+	* [S3 fetcher](https://godoc.org/gitlab.com/moresec/overseer/fetcher#S3)
+	* [Github fetcher](https://godoc.org/gitlab.com/moresec/overseer/fetcher#Github)
 
 ### Third-party Fetchers
 

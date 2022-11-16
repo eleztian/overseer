@@ -15,6 +15,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"strconv"
+	"strings"
 	"sync"
 	"syscall"
 	"time"
@@ -288,10 +289,21 @@ func (mp *master) fetch() {
 		mp.warnf("failed to run temp binary: %s (%s) output \"%s\"", err, tmpBinPath, tokenOut)
 		return
 	}
-	if tokenIn != string(tokenOut) {
+
+	tokenOutStr := string(tokenOut)
+	tokenOutStrs := strings.Split(tokenOutStr, "\n")
+	pass := false
+	for _, to := range tokenOutStrs {
+		if tokenIn == to {
+			pass = true
+
+		}
+	}
+	if !pass {
 		mp.warnf("sanity check failed")
 		return
 	}
+
 	//overwrite!
 	if err := overwrite(mp.binPath, tmpBinPath); err != nil {
 		mp.warnf("failed to overwrite binary: %s", err)

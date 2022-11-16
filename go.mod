@@ -1,4 +1,4 @@
-module github.com/jpillora/overseer
+module github.com/moresec/overseer
 
 go 1.13
 
