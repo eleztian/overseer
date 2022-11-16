@@ -1,4 +1,4 @@
-module github.com/moresec/overseer
+module gitlab.moresec.cn/moresec/overseer
 
 go 1.13
 

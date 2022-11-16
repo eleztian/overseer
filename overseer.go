@@ -10,7 +10,7 @@ import (
 	"runtime"
 	"time"
 
-	"gitlab.com/moresec/overseer/fetcher"
+	"gitlab.moresec.cn/moresec/overseer/fetcher"
 )
 
 const (

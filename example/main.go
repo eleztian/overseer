@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"time"
 
-	"gitlab.com/moresec/overseer"
-	"gitlab.com/moresec/overseer/fetcher"
+	"gitlab.moresec.cn/moresec/overseer"
+	"gitlab.moresec.cn/moresec/overseer/fetcher"
 )
 
 //see example.sh for the use-case
