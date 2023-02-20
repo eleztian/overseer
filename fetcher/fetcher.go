@@ -11,11 +11,11 @@ type Interface interface {
 	Init() error
 	//Fetch should check if there is an updated
 	//binary to fetch, and then stream it back the
-	//form of an io.Reader. If io.Reader is nil,
+	//form of an io.ReadCloser. If io.ReadCloser is nil,
 	//then it is assumed there are no updates. Fetch
 	//will be run repeatedly and forever. It is up the
 	//implementation to throttle the fetch frequency.
-	Fetch() (io.Reader, error)
+	Fetch(curHash string) (reader io.Reader, err error)
 }
 
 // Func converts a fetch function into the fetcher interface
@@ -31,6 +31,6 @@ func (f fetcher) Init() error {
 	return nil //skip
 }
 
-func (f fetcher) Fetch() (io.Reader, error) {
+func (f fetcher) Fetch(curHash string) (io.Reader, error) {
 	return f.fn()
 }

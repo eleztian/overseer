@@ -2,8 +2,8 @@ package overseer
 
 import (
 	"bytes"
+	"crypto/md5"
 	"crypto/rand"
-	"crypto/sha1"
 	"encoding/hex"
 	"fmt"
 	"io"
@@ -80,15 +80,22 @@ func (mp *master) checkBinary() error {
 		//copy permissions
 		mp.binPerms = info.Mode()
 	}
+
 	f, err := os.Open(binPath)
 	if err != nil {
 		return fmt.Errorf("cannot read binary (%s)", err)
 	}
+
 	//initial hash of file
-	hash := sha1.New()
-	io.Copy(hash, f)
+	hash := md5.New()
+	_, err = io.Copy(hash, f)
+	if err != nil {
+		_ = f.Close()
+		return fmt.Errorf("mash md5 failed (%s)", err)
+	}
 	mp.binHash = hash.Sum(nil)
-	f.Close()
+	_ = f.Close()
+
 	//test bin<->tmpbin moves
 	if mp.Config.Fetcher != nil {
 		if err := move(tmpBinPath, mp.binPath); err != nil {
@@ -202,7 +209,7 @@ func (mp *master) fetch() {
 	if mp.printCheckUpdate {
 		mp.debugf("checking for updates...")
 	}
-	reader, err := mp.Fetcher.Fetch()
+	reader, err := mp.Fetcher.Fetch(fmt.Sprintf("%x", mp.binHash))
 	if err != nil {
 		mp.debugf("failed to get latest version: %s", err)
 		return
@@ -229,8 +236,8 @@ func (mp *master) fetch() {
 		tmpBin.Close()
 		os.Remove(tmpBinPath)
 	}()
-	//tee off to sha1
-	hash := sha1.New()
+	//tee off to md5
+	hash := md5.New()
 	reader = io.TeeReader(reader, hash)
 	//write to a temp file
 	_, err = io.Copy(tmpBin, reader)
@@ -309,7 +316,7 @@ func (mp *master) fetch() {
 		mp.warnf("failed to overwrite binary: %s", err)
 		return
 	}
-	mp.debugf("upgraded binary (%x -> %x)", mp.binHash[:12], newHash[:12])
+	mp.debugf("upgraded binary (%x -> %x)", mp.binHash, newHash)
 	mp.binHash = newHash
 	//binary successfully replaced
 	if !mp.Config.NoRestartAfterFetch {
@@ -362,7 +369,7 @@ func (mp *master) fork() error {
 	mp.slaveID++
 	//provide the slave process with some state
 	e := os.Environ()
-	e = append(e, envBinID+"="+hex.EncodeToString(mp.binHash))
+	e = append(e, envBinID+"="+fmt.Sprintf("%x", mp.binHash))
 	e = append(e, envBinPath+"="+mp.binPath)
 	e = append(e, envSlaveID+"="+strconv.Itoa(mp.slaveID))
 	e = append(e, envIsSlave+"=1")

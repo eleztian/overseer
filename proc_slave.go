@@ -23,7 +23,7 @@ type State struct {
 	//this program will be running in a child process and
 	//overseer will perform rolling upgrades.
 	Enabled bool
-	//ID is a SHA-1 hash of the current running binary
+	//ID is a MD5 hash of the current running binary
 	ID string
 	//StartedAt records the start time of the program
 	StartedAt time.Time

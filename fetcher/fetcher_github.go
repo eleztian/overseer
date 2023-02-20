@@ -28,7 +28,6 @@ type Github struct {
 	//internal state
 	releaseURL    string
 	delay         bool
-	lastETag      string
 	latestRelease struct {
 		TagName string `json:"tag_name"`
 		Assets  []struct {
@@ -64,7 +63,7 @@ func (h *Github) Init() error {
 }
 
 // Fetch the binary from the provided Repository
-func (h *Github) Fetch() (io.Reader, error) {
+func (h *Github) Fetch(curHash string) (io.Reader, error) {
 	//delay fetches after first
 	if h.delay {
 		time.Sleep(h.Interval)
@@ -122,7 +121,7 @@ func (h *Github) Fetch() (io.Reader, error) {
 		return nil, fmt.Errorf("release location request failed (status code %d)", resp.StatusCode)
 	}
 	etag := resp.Header.Get("ETag")
-	if etag != "" && h.lastETag == etag {
+	if etag != "" && curHash == etag {
 		return nil, nil //skip, hash match
 	}
 	//get binary request
@@ -134,7 +133,6 @@ func (h *Github) Fetch() (io.Reader, error) {
 		resp.Body.Close()
 		return nil, fmt.Errorf("release binary request failed (status code %d)", resp.StatusCode)
 	}
-	h.lastETag = etag
 	//success!
 	//extract gz files
 	if strings.HasSuffix(assetURL, ".gz") && resp.Header.Get("Content-Encoding") != "gzip" {

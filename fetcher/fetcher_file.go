@@ -35,13 +35,13 @@ func (f *File) Init() error {
 }
 
 // Fetch file from the specified Path
-func (f *File) Fetch() (io.Reader, error) {
+func (f *File) Fetch(curHash string) (io.Reader, error) {
 	//only delay after first fetch
 	if f.delay {
 		time.Sleep(f.Interval)
 	}
 	f.delay = true
-	lastHash := f.hash
+	lastHash := curHash
 	if err := f.updateHash(); err != nil {
 		return nil, err
 	}

@@ -2,13 +2,10 @@ package fetcher
 
 import (
 	"compress/gzip"
-	"crypto/md5"
-	"encoding/hex"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"strings"
 	"time"
 
@@ -34,9 +31,8 @@ type S3 struct {
 	//GetTimeout defaults to 5 minutes
 	GetTimeout time.Duration
 	//interal state
-	client   *http.Client
-	delay    bool
-	lastETag string
+	client *http.Client
+	delay  bool
 }
 
 // Init validates the provided config
@@ -48,15 +44,6 @@ func (s *S3) Init() error {
 	}
 	if s.Region == "" {
 		s.Region = "ap-southeast-2"
-	}
-	//initial etag
-	if p, _ := os.Executable(); p != "" {
-		if f, err := os.Open(p); err == nil {
-			h := md5.New()
-			io.Copy(h, f)
-			f.Close()
-			s.lastETag = hex.EncodeToString(h.Sum(nil))
-		}
 	}
 	//apply defaults
 	if s.Interval <= 0 {
@@ -72,7 +59,7 @@ func (s *S3) Init() error {
 }
 
 // Fetch the binary from S3
-func (s *S3) Fetch() (io.Reader, error) {
+func (s *S3) Fetch(curHash string) (io.Reader, error) {
 	//delay fetches after first
 	if s.delay {
 		time.Sleep(s.Interval)
@@ -100,10 +87,9 @@ func (s *S3) Fetch() (io.Reader, error) {
 		return nil, fmt.Errorf("HEAD request failed (%s)", resp.Status)
 	}
 	etag := strings.Trim(resp.Header.Get("ETag"), `"`)
-	if s.lastETag == etag {
+	if curHash == etag {
 		return nil, nil //skip, file match
 	}
-	s.lastETag = etag
 	//binary fetch using GET
 	req, err = s3.NewRequest("GET", opts...)
 	if err != nil {

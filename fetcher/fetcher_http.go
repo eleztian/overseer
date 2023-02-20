@@ -42,7 +42,7 @@ func (h *HTTP) Init() error {
 }
 
 // Fetch the binary from the provided URL
-func (h *HTTP) Fetch() (io.Reader, error) {
+func (h *HTTP) Fetch(curHash string) (io.Reader, error) {
 	//delay fetches after first
 	if h.delay {
 		time.Sleep(h.Interval)
